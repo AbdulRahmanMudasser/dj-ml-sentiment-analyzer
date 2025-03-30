@@ -1,18 +1,177 @@
+<!-- analyzer/templates/home.html -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sentiment Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+        }
+
+        .analysis-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
+
+        button {
+            align-self: flex-end;
+            background: #1a73e8;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #1557b0;
+        }
+
+        .result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .positive {
+            background: #e6f4ea;
+            color: #137333;
+            border: 2px solid #137333;
+        }
+
+        .negative {
+            background: #fce8e6;
+            color: #c5221f;
+            border: 2px solid #c5221f;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .neutral {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #6c757d;
+        }
+        
+        .invalid {
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #856404;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 0.5rem;
+            font-weight: normal;
+        }
+        
+        /* Add this to form element */
+        .analysis-form:invalid button {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
-    <h1>Enter Text for Sentiment Analysis</h1>
-    <form method="post">
-        {% csrf_token %}
-        <textarea name="text" rows="4" cols="50"></textarea>
-        <br>
-        <button type="submit">Analyze</button>
-    </form>
-    {% if result %}
-        <h3>Result: {{ result }}</h3>
-    {% endif %}
+    <div class="container">
+        <h1>📊 Sentiment Analyzer</h1>
+        
+        <form class="analysis-form" method="post" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <textarea 
+                name="text" 
+                placeholder="Enter your text here..."
+                required
+                minlength="3"
+            ></textarea>
+            <button type="submit">Analyze Sentiment</button>
+        </form>
+        
+        {% if result %}
+            <div class="result-box {{ result }}">
+                <h3>Analysis Result:</h3>
+                {% if result == "invalid" %}
+                    <p class="error-message">Please enter valid text (minimum 3 characters)</p>
+                {% else %}
+                    <p>{{ result|title }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        
+        <script>
+        function validateForm() {
+            const textarea = document.querySelector('textarea');
+            if (textarea.value.trim().length < 3) {
+                alert('Please enter at least 3 characters for analysis');
+                return false;
+            }
+            return true;
+        }
+        </script>
+    </div>
 </body>
 </html>
