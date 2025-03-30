@@ -5,9 +5,20 @@ import joblib
 
 # Sample Data
 df = pd.DataFrame({
-    'text': ['I love this', 'Terrible experience', 'Awesome service', 'Waste of time'],
-    'sentiment': ['positive', 'negative', 'positive', 'negative']
+    'text': [
+        'I love this product!', 'Excellent service', 'Wonderful experience',
+        'Highly recommended', 'Terrible quality', 'Worst purchase ever',
+        'Disappointing', 'Absolutely hated it', '', ' ',  
+    ],
+    'sentiment': [
+        'positive', 'positive', 'positive', 'positive',
+        'negative', 'negative', 'negative', 'negative',
+        'neutral', 'neutral'
+    ]
 })
+
+# Handle empty strings explicitly
+df['text'] = df['text'].str.strip().replace(r'^\s*$', 'neutral', regex=True)
 
 # Preprocessing
 vectorizer = TfidfVectorizer()
